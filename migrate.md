@@ -1,5 +1,36 @@
 # Migrate document
 
+## 2.x to 3.0.0
+
+There are several breaking changes in 3.0.0:
+
+- Package name changed from `flutter_image_compress` to `image_compress_plus`.
+- Import path changed from `flutter_image_compress.dart` to `image_compress_plus.dart`.
+- The implementation package was split to federated platform packages (`image_compress_plus_android`, `image_compress_plus_ios`, `image_compress_plus_linux`, `image_compress_plus_windows`, etc.).
+- Android plugin namespace changed to `world.nailao.image_compress_plus`.
+
+### Before (2.x)
+
+```yaml
+dependencies:
+  flutter_image_compress: ^2.4.0
+```
+
+```dart
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+```
+
+### After (3.0.0)
+
+```yaml
+dependencies:
+  image_compress_plus: ^3.0.0
+```
+
+```dart
+import 'package:image_compress_plus/image_compress_plus.dart';
+```
+
 ## 1.x to 2.x
 
 There are several changes

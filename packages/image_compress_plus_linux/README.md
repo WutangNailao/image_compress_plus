@@ -1,7 +1,7 @@
 # image_compress_plus
 
 [![ImageCompress](https://img.shields.io/badge/fluttercandies-ImageCompress-blue.svg)](https://github.com/WuTangNaiLao/image_compress_plus)
-[![pub package](https://img.shields.io/pub/v/image_compress_plus.svg)](https://pub.dartlang.org/packages/image_compress_plus)
+[![pub package](https://img.shields.io/pub/v/image_compress_plus.svg)](https://pub.dev/packages/image_compress_plus)
 [![GitHub license](https://img.shields.io/github/license/WuTangNaiLao/image_compress_plus?style=flat-square)](https://github.com/WuTangNaiLao/image_compress_plus/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/WuTangNaiLao/image_compress_plus.svg?style=social&label=Stars)](https://github.com/WuTangNaiLao/image_compress_plus)
 [![Awesome Flutter](https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square)](https://stackoverflow.com/questions/tagged/flutter?sort=votes)
@@ -9,7 +9,7 @@
 
 Compresses image as native plugin (Obj-C/Kotlin/C++). This library works on Android, iOS, Linux, Windows, macOS, Web, OpenHarmony.
 
-- [flutter\_image\_compress](#image_compress_plus)
+- [image\_compress\_plus](#image_compress_plus)
   - [Why don't you use dart to do it](#why-dont-you-use-dart-to-do-it)
   - [Platform Features](#platform-features)
   - [Usage](#usage)
@@ -336,7 +336,7 @@ You may need to update Kotlin to version `1.5.21` or higher.
 Sometimes, compressing will return null. You should check if you can read/write the file,
 and the parent folder of the target file must exist.
 
-For example, use the [path_provider](https://pub.dartlang.org/packages/path_provide)
+For example, use the [path_provider](https://pub.dev/packages/path_provider)
 plugin to access some application folders,
 and use a permission plugin to request permission to access SD cards on Android/iOS.
 

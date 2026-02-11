@@ -1,7 +1,7 @@
 # image_compress_plus
 
 [![ImageCompress](https://img.shields.io/badge/fluttercandies-ImageCompress-blue.svg)](https://github.com/WuTangNaiLao/image_compress_plus)
-[![pub package](https://img.shields.io/pub/v/image_compress_plus.svg)](https://pub.dartlang.org/packages/image_compress_plus)
+[![pub package](https://img.shields.io/pub/v/image_compress_plus.svg)](https://pub.dev/packages/image_compress_plus)
 [![GitHub license](https://img.shields.io/github/license/WuTangNaiLao/image_compress_plus?style=flat-square)](https://github.com/WuTangNaiLao/image_compress_plus/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/WuTangNaiLao/image_compress_plus.svg?style=social&label=Stars)](https://github.com/WuTangNaiLao/image_compress_plus)
 [![Awesome Flutter](https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square)](https://stackoverflow.com/questions/tagged/flutter?sort=votes)
@@ -12,6 +12,7 @@ Compresses image as native plugin (Obj-C/Kotlin/C++). This library works on Andr
   - [Why don't you use dart to do it](#why-dont-you-use-dart-to-do-it)
   - [Platform Features](#platform-features)
   - [Usage](#usage)
+  - [Migration (2.x to 3.0.0)](#migration-2x-to-300)
   - [About common params](#about-common-params)
     - [minWidth and minHeight](#minwidth-and-minheight)
     - [rotate](#rotate)
@@ -145,6 +146,17 @@ There are several ways to use the library api.
     return result;
   }
 ```
+
+## Migration (2.x to 3.0.0)
+
+`3.0.0` includes breaking changes for package naming and project structure:
+
+1. Rename dependency from `flutter_image_compress` to `image_compress_plus`.
+2. Update import from `package:flutter_image_compress/flutter_image_compress.dart` to `package:image_compress_plus/image_compress_plus.dart`.
+3. If you directly depend on implementation packages, switch to new federated package names such as `image_compress_plus_android` / `image_compress_plus_ios` / `image_compress_plus_windows`.
+4. Android plugin namespace changed to `world.nailao.image_compress_plus` (no action needed for normal plugin usage).
+
+Detailed examples are available in [migrate.md](https://github.com/WuTangNaiLao/image_compress_plus/blob/main/migrate.md).
 
 ## About common params
 
@@ -335,7 +347,7 @@ You may need to update Kotlin to version `1.5.21` or higher.
 Sometimes, compressing will return null. You should check if you can read/write the file,
 and the parent folder of the target file must exist.
 
-For example, use the [path_provider](https://pub.dartlang.org/packages/path_provide)
+For example, use the [path_provider](https://pub.dev/packages/path_provider)
 plugin to access some application folders,
 and use a permission plugin to request permission to access SD cards on Android/iOS.
 

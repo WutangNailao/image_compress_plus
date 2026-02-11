@@ -1,3 +1,7 @@
+## 0.1.0
+
+- **DEPS**: bumped minor version to align with image_compress_plus 3.0.0 release line.
+
 ## 0.0.3
 
  - **FEAT**: Update plugin structure for OpenHarmony ([#301](https://github.com/fluttercandies/flutter_image_compress/issues/301)). ([5e999c43](https://github.com/fluttercandies/flutter_image_compress/commit/5e999c431c5dcff880b8c217e40fa7d027ca0bdc))

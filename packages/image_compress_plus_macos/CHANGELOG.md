@@ -1,3 +1,7 @@
+## 2.0.0
+
+- **BREAKING**: major version bump to align with image_compress_plus 3.0.0.
+
 ## 1.0.3
 
  - **FIX**: Correct image size calculation for macOS with NSImage ([#316](https://github.com/fluttercandies/flutter_image_compress/issues/316)). ([e67ddf96](https://github.com/fluttercandies/flutter_image_compress/commit/e67ddf96ad1495281d3c5ac017d153b81f95d456))

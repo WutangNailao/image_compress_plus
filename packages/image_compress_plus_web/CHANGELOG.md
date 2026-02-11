@@ -1,3 +1,7 @@
+## 0.2.0
+
+- **DEPS**: bumped minor version to align with image_compress_plus 3.0.0 release line.
+
 ## 0.1.5
 
  - **FIX**: fix pica initialization to use window object instead of jsWindow for improved compatibility. ([dd5b101c](https://github.com/fluttercandies/flutter_image_compress/commit/dd5b101cfedaf3e45b1f9c056cd66c1981ce3c86))

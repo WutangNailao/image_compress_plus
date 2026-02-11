@@ -1,7 +1,7 @@
 name: image_compress_plus_linux
 description: Linux implementation of image_compress_plus.
 repository: https://github.com/WuTangNaiLao/image_compress_plus
-version: 1.0.6
+version: 2.0.0
 
 environment:
   sdk: '>=2.12.0 <4.0.0'
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  image_compress_plus_platform_interface: ^1.0.5
+  image_compress_plus_platform_interface: ^2.0.0
 
 flutter:
   plugin:

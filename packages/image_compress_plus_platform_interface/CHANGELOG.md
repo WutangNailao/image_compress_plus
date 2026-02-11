@@ -1,3 +1,7 @@
+## 2.0.0
+
+- **BREAKING**: major version bump to align with image_compress_plus 3.0.0.
+
 ## 1.0.5
 
  - **DOCS**: The first version for OpenHarmony. ([5fcab8da](https://github.com/fluttercandies/flutter_image_compress/commit/5fcab8dac6277b36b7169962474e5af3cf88724b))

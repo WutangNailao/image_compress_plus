@@ -1,3 +1,7 @@
+## 2.0.0
+
+- **BREAKING**: major version bump to align with image_compress_plus 3.0.0.
+
 ## 1.0.6
 
 - **DEPS**: Bump `compileSdk` to `34`.

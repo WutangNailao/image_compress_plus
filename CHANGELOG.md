@@ -7,8 +7,73 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Changes
 
-- **BREAKING**: renamed `flutter_image_compress` to `image_compress_plus`.
-- **BREAKING**: split the former `image_compress_plus_common` into platform packages: `image_compress_plus_android`, `image_compress_plus_ios`, `image_compress_plus_linux`, `image_compress_plus_windows`.
+- No changes yet.
+
+## 2026-02-11
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`image_compress_plus` - `v3.0.0`](#image_compress_plus---v300)
+ - [`image_compress_plus_platform_interface` - `v2.0.0`](#image_compress_plus_platform_interface---v200)
+ - [`image_compress_plus_android` - `v2.0.0`](#image_compress_plus_android---v200)
+ - [`image_compress_plus_ios` - `v2.0.0`](#image_compress_plus_ios---v200)
+ - [`image_compress_plus_linux` - `v2.0.0`](#image_compress_plus_linux---v200)
+ - [`image_compress_plus_windows` - `v2.0.0`](#image_compress_plus_windows---v200)
+ - [`image_compress_plus_macos` - `v2.0.0`](#image_compress_plus_macos---v200)
+
+Packages with other changes:
+
+ - [`image_compress_plus_web` - `v0.2.0`](#image_compress_plus_web---v020)
+ - [`image_compress_plus_ohos` - `v0.1.0`](#image_compress_plus_ohos---v010)
+
+---
+
+#### `image_compress_plus` - `v3.0.0`
+
+ - **BREAKING**: renamed package from `flutter_image_compress` to `image_compress_plus`.
+ - **BREAKING**: split the former shared implementation package into platform packages.
+ - **BREAKING**: updated Android plugin namespace to `world.nailao.image_compress_plus`.
+ - **FEAT**: modernized example app and project templates across Android/iOS/Linux/Windows.
+ - **PERF**: optimized native compression paths on iOS, macOS, and Windows.
+ - **FIX**: updated `commons-io` dependency to `2.16.1+` for security hardening.
+ - **DOCS**: removed outdated `CompressFormat.webp` note in platform interface docs.
+
+#### `image_compress_plus_platform_interface` - `v2.0.0`
+
+ - **BREAKING**: major version bump to align with `image_compress_plus` `v3.0.0`.
+
+#### `image_compress_plus_android` - `v2.0.0`
+
+ - **BREAKING**: major version bump to align with `image_compress_plus` `v3.0.0`.
+ - **BREAKING**: Android plugin namespace updated to `world.nailao.image_compress_plus`.
+
+#### `image_compress_plus_ios` - `v2.0.0`
+
+ - **BREAKING**: major version bump to align with `image_compress_plus` `v3.0.0`.
+
+#### `image_compress_plus_linux` - `v2.0.0`
+
+ - **BREAKING**: major version bump to align with `image_compress_plus` `v3.0.0`.
+
+#### `image_compress_plus_windows` - `v2.0.0`
+
+ - **BREAKING**: major version bump to align with `image_compress_plus` `v3.0.0`.
+
+#### `image_compress_plus_macos` - `v2.0.0`
+
+ - **BREAKING**: major version bump to align with `image_compress_plus` `v3.0.0`.
+
+#### `image_compress_plus_web` - `v0.2.0`
+
+ - **DEPS**: bumped minor version to align with `image_compress_plus` `v3.0.0` release line.
+
+#### `image_compress_plus_ohos` - `v0.1.0`
+
+ - **DEPS**: bumped minor version to align with `image_compress_plus` `v3.0.0` release line.
 
 ## 2025-01-02
 

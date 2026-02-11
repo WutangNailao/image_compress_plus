@@ -1,6 +1,6 @@
 name: image_compress_plus_web
 description: The web implementation of `image_compress_plus`.
-version: 0.1.5
+version: 0.2.0
 repository: https://github.com/WuTangNaiLao/image_compress_plus
 
 environment:
@@ -13,7 +13,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  image_compress_plus_platform_interface: ^1.0.5
+  image_compress_plus_platform_interface: ^2.0.0
   web: ^1.1.0
 
 dev_dependencies:

@@ -1,3 +1,13 @@
+## 3.0.0
+
+ - **BREAKING**: renamed package from `flutter_image_compress` to `image_compress_plus`.
+ - **BREAKING**: moved implementation to federated platform packages.
+ - **BREAKING**: updated Android plugin namespace to `world.nailao.image_compress_plus`.
+ - **FEAT**: modernized example app and project templates across Android/iOS/Linux/Windows.
+ - **PERF**: optimized native compression paths on iOS, macOS, and Windows.
+ - **FIX**: updated `commons-io` dependency to `2.16.1+` for security hardening.
+ - **DOCS**: removed outdated `CompressFormat.webp` note in platform interface docs.
+
 ## 2.4.0
 
  - **FEAT**: remove pica from web ([#324](https://github.com/fluttercandies/flutter_image_compress/issues/324)). ([b56ce0fa](https://github.com/fluttercandies/flutter_image_compress/commit/b56ce0fa4763bf8084c26ea8e435e37e06997ba8))
@@ -43,7 +53,7 @@
 
 - The result `File` to `XFile` of [cross_file](https://pub.dev/packages/cross_file)
 
-See the [migration guide](https://github.com/fluttercandies/flutter_image_compress/blob/main/migrate.md) for more details.
+See the [migration guide](https://github.com/WuTangNaiLao/image_compress_plus/blob/main/migrate.md) for more details.
 
 ## 1.1.3
 
