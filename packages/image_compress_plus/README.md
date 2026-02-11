@@ -9,6 +9,7 @@
 Compresses image as native plugin (Obj-C/Kotlin/C++). This library works on Android, iOS, Linux, Windows, macOS, Web, OpenHarmony.
 
 - [image\_compress\_plus](#image_compress_plus)
+  - [About This Fork](#about-this-fork)
   - [Why don't you use dart to do it](#why-dont-you-use-dart-to-do-it)
   - [Platform Features](#platform-features)
   - [Usage](#usage)
@@ -35,6 +36,17 @@ Compresses image as native plugin (Obj-C/Kotlin/C++). This library works on Andr
   - [Web](#web)
   - [About macOS](#about-macos)
   - [OpenHarmony](#openharmony)
+
+## About This Fork
+
+`image_compress_plus` is a community-maintained fork of `flutter_image_compress`.
+
+This fork focuses on:
+
+- continuing active maintenance and version upgrades,
+- improving native compression performance across platforms,
+- fixing compatibility issues for newer Flutter/SDK/toolchain versions,
+- keeping documentation and migration guides up to date.
 
 ## Why don't you use dart to do it
 
