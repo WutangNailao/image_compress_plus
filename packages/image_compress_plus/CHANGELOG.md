@@ -1,3 +1,7 @@
+## Unreleased
+
+- **BREAKING**: raised minimum iOS deployment target to `13.0`.
+
 ## 3.0.0
 
  - **BREAKING**: renamed package from `flutter_image_compress` to `image_compress_plus`.

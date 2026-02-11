@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Changes
 
-- No changes yet.
+- **BREAKING**: raised minimum iOS deployment target to `13.0`.
 
 ## 2026-02-11
 

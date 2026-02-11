@@ -49,8 +49,8 @@ class ImageCompressPlusValidator {
       if (Platform.isIOS) {
         final String version = await channel.invokeMethod('getSystemVersion');
         final firstVersion = version.split('.')[0];
-        final result = int.parse(firstVersion) >= 11;
-        const msg = 'The heic format only support iOS 11.0+';
+        final result = int.parse(firstVersion) >= 13;
+        const msg = 'The heic format only support iOS 13.0+';
         assert(result, msg);
         _checkThrowError(result, msg);
         return result;

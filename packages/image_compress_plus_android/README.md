@@ -228,7 +228,7 @@ bypassing other three-party libraries, but there are no plan for that currently.
 
 ##### Heif for iOS
 
-Only support iOS 11+.
+Only support iOS 13+.
 
 ##### Heif for Android
 

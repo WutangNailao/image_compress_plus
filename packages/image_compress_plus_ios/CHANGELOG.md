@@ -1,3 +1,7 @@
+## Unreleased
+
+- **BREAKING**: raised minimum iOS deployment target to `13.0`.
+
 ## 2.0.0
 
 - **BREAKING**: major version bump to align with image_compress_plus 3.0.0.
