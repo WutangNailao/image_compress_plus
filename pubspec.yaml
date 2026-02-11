@@ -1,4 +1,4 @@
-name: flutter_image_compress_workspace
+name: image_compress_plus_workspace
 
 environment:
   sdk: '>=2.18.0 <4.0.0'

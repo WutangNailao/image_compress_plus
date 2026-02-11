@@ -1,0 +1,14 @@
+name: image_compress_plus_platform_interface
+description: The platform interface of image_compress_plus.
+repository: https://github.com/WuTangNaiLao/image_compress_plus
+version: 1.0.5
+
+environment:
+  sdk: '>=2.12.0 <4.0.0'
+  flutter: '>=2.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.0
+  cross_file: ^0.3.3+2

@@ -1,0 +1,21 @@
+name: image_compress_plus_windows
+description: Windows implementation of image_compress_plus.
+repository: https://github.com/WuTangNaiLao/image_compress_plus
+version: 1.0.6
+
+environment:
+  sdk: '>=2.12.0 <4.0.0'
+  flutter: '>=2.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  image_compress_plus_platform_interface: ^1.0.5
+
+flutter:
+  plugin:
+    implements: image_compress_plus
+    platforms:
+      windows:
+        pluginClass: ImageCompressPlusWindowsPlugin
+        dartPluginClass: ImageCompressPlusWindows

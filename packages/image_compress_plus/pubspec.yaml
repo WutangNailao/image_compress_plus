@@ -1,0 +1,38 @@
+name: image_compress_plus
+description: Compress Pictures. Can effectively reduce the size of the transmission.
+repository: https://github.com/WuTangNaiLao/image_compress_plus
+version: 2.4.0
+
+environment:
+  sdk: '>=2.12.0 <4.0.0'
+  flutter: '>=2.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  image_compress_plus_platform_interface: ^1.0.5
+  image_compress_plus_android: ^1.0.6
+  image_compress_plus_ios: ^1.0.6
+  image_compress_plus_linux: ^1.0.6
+  image_compress_plus_windows: ^1.0.6
+  image_compress_plus_web: ^0.1.5
+  image_compress_plus_macos: ^1.0.3
+  image_compress_plus_ohos: ^0.0.3
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: image_compress_plus_android
+      ios:
+        default_package: image_compress_plus_ios
+      macos:
+        default_package: image_compress_plus_macos
+      linux:
+        default_package: image_compress_plus_linux
+      windows:
+        default_package: image_compress_plus_windows
+      web:
+        default_package: image_compress_plus_web
+      ohos:
+        default_package: image_compress_plus_ohos

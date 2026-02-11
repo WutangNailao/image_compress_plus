@@ -1,5 +1,5 @@
-name: flutter_image_compress
-repository: https://github.com/fluttercandies/flutter_image_compress
+name: image_compress_plus
+repository: https://github.com/WuTangNaiLao/image_compress_plus
 
 packages:
   - packages/**

@@ -1,0 +1,21 @@
+name: image_compress_plus_macos
+description: The implementation of macOS for image_compress_plus.
+version: 1.0.3
+homepage: https://github.com/WuTangNaiLao/image_compress_plus
+
+environment:
+  sdk: '>=2.12.0 <4.0.0'
+  flutter: '>=2.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  image_compress_plus_platform_interface: ^1.0.5
+  
+flutter:
+  plugin:
+    implements: image_compress_plus
+    platforms:
+      macos:
+        pluginClass: FlutterImageCompressMacosPlugin
+        dartPluginClass: ImageCompressPlusMacos

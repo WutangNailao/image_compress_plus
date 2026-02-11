@@ -1,0 +1,27 @@
+name: image_compress_plus_example
+description: Demonstrates how to use the image_compress_plus plugin.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+  flutter: '>=2.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  image_compress_plus:
+    path: ../
+  # image_compress_plus_web:
+  #   path: ../../image_compress_plus_web
+  path_provider: ^2.0.0
+  path_provider_ohos:
+     git:
+       url: https://gitee.com/openharmony-sig/flutter_packages.git
+       path: packages/path_provider/path_provider_ohos
+flutter:
+  uses-material-design: true
+
+  assets:
+    - img/

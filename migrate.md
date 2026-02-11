@@ -9,7 +9,7 @@ There are several changes
 1.0:
 
 ```dart
-final File file = FlutterImageCompress.compressAndGetFile(
+final File file = ImageCompressPlus.compressAndGetFile(
       file.absolute.path,
       targetPath,
       quality: 90,
@@ -25,7 +25,7 @@ Uint8List buffer = file.readAsBytesSync();
 2.0:
 
 ```dart
-final XFile file = await FlutterImageCompress.compressAndGetFile(
+final XFile file = await ImageCompressPlus.compressAndGetFile(
       file.absolute.path,
       targetPath,
       quality: 90,

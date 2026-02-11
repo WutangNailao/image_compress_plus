@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## Unreleased
+
+### Changes
+
+- **BREAKING**: renamed `flutter_image_compress` to `image_compress_plus`.
+- **BREAKING**: split the former `image_compress_plus_common` into platform packages: `image_compress_plus_android`, `image_compress_plus_ios`, `image_compress_plus_linux`, `image_compress_plus_windows`.
+
 ## 2025-01-02
 
 ### Changes
@@ -226,4 +233,3 @@ Packages with other changes:
 #### `flutter_image_compress_web` - `v0.1.3+1`
 
  - **DOCS**: Update changelog. ([c847f5d5](https://github.com/fluttercandies/flutter_image_compress/commit/c847f5d5d03d4e727b1a83dd33e54d8d93787749))
-

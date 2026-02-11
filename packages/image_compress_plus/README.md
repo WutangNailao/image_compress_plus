@@ -5,14 +5,12 @@
 [![GitHub license](https://img.shields.io/github/license/WuTangNaiLao/image_compress_plus?style=flat-square)](https://github.com/WuTangNaiLao/image_compress_plus/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/WuTangNaiLao/image_compress_plus.svg?style=social&label=Stars)](https://github.com/WuTangNaiLao/image_compress_plus)
 [![Awesome Flutter](https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square)](https://stackoverflow.com/questions/tagged/flutter?sort=votes)
-[![FlutterCandies](https://pub.idqqimg.com/wpa/images/group.png)](https://jq.qq.com/?_wv=1027&k=5bcc0gy)
 
 Compresses image as native plugin (Obj-C/Kotlin/C++). This library works on Android, iOS, Linux, Windows, macOS, Web, OpenHarmony.
 
 - [image\_compress\_plus](#image_compress_plus)
   - [Why don't you use dart to do it](#why-dont-you-use-dart-to-do-it)
   - [Platform Features](#platform-features)
-  - [Platform Packages](#platform-packages)
   - [Usage](#usage)
   - [About common params](#about-common-params)
     - [minWidth and minHeight](#minwidth-and-minheight)
@@ -34,7 +32,6 @@ Compresses image as native plugin (Obj-C/Kotlin/C++). This library works on Andr
     - [Compressing returns `null`](#compressing-returns-null)
   - [About EXIF information](#about-exif-information)
   - [Web](#web)
-  - [Linux / Windows](#linux--windows)
   - [About macOS](#about-macos)
   - [OpenHarmony](#openharmony)
 
@@ -62,16 +59,6 @@ even in release version. Using isolate does not solve the problem.
 | param: keepExif            |    ✅    |   ✅   |  ✅   |   ✅    |            ❌            |   ✅   |     ❌     |
 
 [webp-compatibility]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob#browser_compatibility "Browser support"
-
-## Platform Packages
-
-- `image_compress_plus_android`
-- `image_compress_plus_ios`
-- `image_compress_plus_linux`
-- `image_compress_plus_windows`
-- `image_compress_plus_macos`
-- `image_compress_plus_web`
-- `image_compress_plus_ohos`
 
 
 ## Usage
@@ -370,12 +357,26 @@ but not `direction` information.
 
 The web implementation is not required for many people,
 
-## Linux / Windows
+This plugin uses [pica][] to implement compression.
 
-This plugin uses system libraries for desktop builds:
+Currently, [debug mode does not allow you to use the dynamic script loading scheme][flutter-126131].
+And when you actually deploy, you may choose server deployment or cdn deployment, so here we suggest you add script node to head or body by yourself in your `<flutte_project>/web/index.html`.
 
-- Linux: `libjpeg-turbo`, `libpng`, `libwebp`, `exiv2`
-- Windows (vcpkg): `libjpeg-turbo`, `libpng`, `libwebp`, `exiv2`
+[flutter-126131]: https://github.com/flutter/flutter/issues/126131
+
+Add for `<flutte_project>/web/index.html`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js" ></script>
+
+<!-- or -->
+
+<script src="https://unpkg.com/pica/dist/pica.min.js" ></script>
+```
+
+About web compatibility: two methods with file will throw an exception when used on the web.
+
+[pica]: https://www.npmjs.com/package/pica?activeTab=readme
 
 ## About macOS
 
@@ -385,6 +386,7 @@ Open xcode project, select Runner target, and change the value of `macOS Deploym
 
 And, change the `Podfile`:
 Change `platform` to `platform :osx, '10.15'`.
+
 
 ## OpenHarmony
 
