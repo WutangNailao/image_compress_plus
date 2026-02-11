@@ -30,7 +30,7 @@ bool WriteBytesToFile(const std::string& path, const std::vector<uint8_t>& data,
                       std::string* error);
 
 bool DecodeImage(const std::vector<uint8_t>& input, ImageBuffer* out,
-                 ImageFormat* detected, std::string* error);
+                 ImageFormat* detected, int in_sample, std::string* error);
 
 bool EncodeImage(const ImageBuffer& image, ImageFormat format, int quality,
                  std::vector<uint8_t>* out, std::string* error);

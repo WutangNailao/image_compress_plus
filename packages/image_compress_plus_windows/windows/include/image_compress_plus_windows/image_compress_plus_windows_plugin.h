@@ -27,4 +27,15 @@ class ImageCompressPlusWindowsPlugin : public flutter::Plugin {
 
 }  // namespace image_compress_plus_windows
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void ImageCompressPlusWindowsPluginRegisterWithRegistrar(
+    FlutterDesktopPluginRegistrarRef registrar);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
+
 #endif  // IMAGE_COMPRESS_PLUS_WINDOWS_PLUGIN_H_

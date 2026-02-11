@@ -13,6 +13,12 @@
 #include <utility>
 #include <vector>
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 
 #include "../desktop/image_compress_core.h"
@@ -187,7 +193,7 @@ static bool CompressBytes(const std::vector<uint8_t>& input,
 
   fic::ImageBuffer image;
   fic::ImageFormat detected = fic::ImageFormat::kUnknown;
-  if (!fic::DecodeImage(input, &image, &detected, error)) {
+  if (!fic::DecodeImage(input, &image, &detected, params.in_sample, error)) {
     return false;
   }
 
@@ -200,10 +206,16 @@ static bool CompressBytes(const std::vector<uint8_t>& input,
     image = fic::RotateImage(image, params.rotate);
   }
 
+  int resize_in_sample = params.in_sample;
+  // JPEG is already decoder-downsampled by in_sample; avoid applying it twice.
+  if (detected == fic::ImageFormat::kJpeg && resize_in_sample > 1) {
+    resize_in_sample = 1;
+  }
+
   int target_w = image.width;
   int target_h = image.height;
   fic::CalcTargetSize(image.width, image.height, params.min_width,
-                      params.min_height, params.in_sample, &target_w,
+                      params.min_height, resize_in_sample, &target_w,
                       &target_h);
   if (target_w != image.width || target_h != image.height) {
     image = fic::ResizeImageBilinear(image, target_w, target_h);
@@ -257,21 +269,6 @@ static bool CompressToFile(const std::vector<uint8_t>& input,
   }
   if (!fic::WriteBytesToFile(params.target_path, output, error)) {
     return false;
-  }
-  if (params.keep_exif) {
-    fic::ExifPack exif;
-    bool has_exif = false;
-    if (!src_path.empty()) {
-      has_exif = fic::ReadExifFromFile(src_path, &exif, error);
-    } else {
-      has_exif = fic::ReadExifFromBytes(input, &exif, error);
-    }
-    if (has_exif && !exif.empty()) {
-      if (params.auto_correction || params.rotate != 0) {
-        fic::NormalizeOrientation(&exif);
-      }
-      fic::ApplyExifToFile(params.target_path, exif, error);
-    }
   }
   return true;
 }

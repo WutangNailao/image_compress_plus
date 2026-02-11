@@ -1,6 +1,7 @@
 #include "exif_utils.h"
 
 #include <cstdint>
+#include <exception>
 
 namespace fic {
 
@@ -26,8 +27,8 @@ bool ReadExifFromFile(const std::string& path, ExifPack* out,
 bool ReadExifFromBytes(const std::vector<uint8_t>& data, ExifPack* out,
                        std::string* error) {
   try {
-    Exiv2::MemIo mem(data.data(), data.size());
-    auto image = Exiv2::ImageFactory::open(&mem);
+    Exiv2::BasicIo::UniquePtr mem_io(new Exiv2::MemIo(data.data(), data.size()));
+    auto image = Exiv2::ImageFactory::open(std::move(mem_io));
     if (!image.get()) {
       if (error) *error = "Failed to open memory image for EXIF";
       return false;
@@ -48,20 +49,18 @@ int OrientationFromExif(const ExifPack& exif) {
     Exiv2::ExifKey key("Exif.Image.Orientation");
     auto it = exif.exif.findKey(key);
     if (it != exif.exif.end()) {
-      return static_cast<int>(it->toLong());
+      return std::stoi(it->toString());
     }
   } catch (const Exiv2::Error&) {
+  } catch (const std::exception&) {
   }
   return 1;
 }
 
 void NormalizeOrientation(ExifPack* exif) {
   try {
-    Exiv2::ExifKey key("Exif.Image.Orientation");
     Exiv2::ExifData& data = exif->exif;
-    Exiv2::Value::UniquePtr v = Exiv2::Value::create(Exiv2::unsignedShort);
-    v->read("1");
-    data[key] = *v;
+    data["Exif.Image.Orientation"] = "1";
   } catch (const Exiv2::Error&) {
   }
 }

@@ -17,12 +17,27 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES
   CXX_STANDARD_REQUIRED ON
 )
 
-target_include_directories(${PLUGIN_NAME} PRIVATE
+target_include_directories(${PLUGIN_NAME} PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/include"
   "${CMAKE_CURRENT_SOURCE_DIR}/../desktop"
 )
 
-target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
+target_compile_definitions(${PLUGIN_NAME} PRIVATE
+  FLUTTER_PLUGIN_IMPL
+  _CRT_SECURE_NO_WARNINGS
+  NOMINMAX
+  WIN32_LEAN_AND_MEAN
+)
+
+if(MSVC)
+  target_compile_options(${PLUGIN_NAME} PRIVATE
+    /WX-
+    /wd4324
+    /wd4611
+    /wd4267
+    /wd4244
+  )
+endif()
 
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
@@ -43,6 +58,6 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 )
 
 set(image_compress_plus_windows_bundled_libraries
-  ""
+  $<TARGET_RUNTIME_DLLS:${PLUGIN_NAME}>
   PARENT_SCOPE
 )

@@ -91,8 +91,15 @@ static void JpegErrorExit(j_common_ptr cinfo) {
   longjmp(err->setjmp_buffer, 1);
 }
 
+static int PickJpegScaleDenom(int in_sample) {
+  if (in_sample >= 8) return 8;
+  if (in_sample >= 4) return 4;
+  if (in_sample >= 2) return 2;
+  return 1;
+}
+
 static bool DecodeJpeg(const std::vector<uint8_t>& input, ImageBuffer* out,
-                       std::string* error) {
+                       int in_sample, std::string* error) {
   jpeg_decompress_struct cinfo;
   JpegErrorManager jerr;
   cinfo.err = jpeg_std_error(&jerr.pub);
@@ -105,6 +112,11 @@ static bool DecodeJpeg(const std::vector<uint8_t>& input, ImageBuffer* out,
   jpeg_create_decompress(&cinfo);
   jpeg_mem_src(&cinfo, input.data(), input.size());
   jpeg_read_header(&cinfo, TRUE);
+  cinfo.scale_num = 1;
+  cinfo.scale_denom = PickJpegScaleDenom(in_sample);
+#ifdef JCS_EXT_RGBA
+  cinfo.out_color_space = JCS_EXT_RGBA;
+#endif
   jpeg_start_decompress(&cinfo);
 
   int width = cinfo.output_width;
@@ -120,6 +132,20 @@ static bool DecodeJpeg(const std::vector<uint8_t>& input, ImageBuffer* out,
   out->height = height;
   out->channels = 4;
   out->data.resize(static_cast<size_t>(width * height * 4));
+
+#ifdef JCS_EXT_RGBA
+  if (components == 4) {
+    while (cinfo.output_scanline < cinfo.output_height) {
+      JSAMPROW row_pointer =
+          out->data.data() + static_cast<size_t>(cinfo.output_scanline * width * 4);
+      jpeg_read_scanlines(&cinfo, &row_pointer, 1);
+    }
+
+    jpeg_finish_decompress(&cinfo);
+    jpeg_destroy_decompress(&cinfo);
+    return true;
+  }
+#endif
 
   std::vector<uint8_t> row_buf(width * components);
   while (cinfo.output_scanline < cinfo.output_height) {
@@ -196,7 +222,7 @@ static bool DecodeWebp(const std::vector<uint8_t>& input, ImageBuffer* out,
 }
 
 bool DecodeImage(const std::vector<uint8_t>& input, ImageBuffer* out,
-                 ImageFormat* detected, std::string* error) {
+                 ImageFormat* detected, int in_sample, std::string* error) {
   if (input.empty()) {
     if (error) *error = "Empty input";
     return false;
@@ -205,7 +231,7 @@ bool DecodeImage(const std::vector<uint8_t>& input, ImageBuffer* out,
   if (detected) *detected = fmt;
   switch (fmt) {
     case ImageFormat::kJpeg:
-      return DecodeJpeg(input, out, error);
+      return DecodeJpeg(input, out, in_sample, error);
     case ImageFormat::kPng:
       return DecodePng(input, out, error);
     case ImageFormat::kWebp:
@@ -238,13 +264,27 @@ static bool EncodeJpeg(const ImageBuffer& image, int quality,
 
   cinfo.image_width = image.width;
   cinfo.image_height = image.height;
+#ifdef JCS_EXT_RGBA
+  cinfo.input_components = 4;
+  cinfo.in_color_space = JCS_EXT_RGBA;
+#else
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
+#endif
   jpeg_set_defaults(&cinfo);
   jpeg_set_quality(&cinfo, std::max(1, std::min(quality, 100)), TRUE);
 
   jpeg_start_compress(&cinfo, TRUE);
 
+#ifdef JCS_EXT_RGBA
+  while (cinfo.next_scanline < cinfo.image_height) {
+    int y = cinfo.next_scanline;
+    JSAMPROW row_pointer = const_cast<JSAMPROW>(
+        reinterpret_cast<const JSAMPLE*>(
+            image.data.data() + static_cast<size_t>(y * image.width * 4)));
+    jpeg_write_scanlines(&cinfo, &row_pointer, 1);
+  }
+#else
   std::vector<uint8_t> row(image.width * 3);
   while (cinfo.next_scanline < cinfo.image_height) {
     int y = cinfo.next_scanline;
@@ -257,6 +297,7 @@ static bool EncodeJpeg(const ImageBuffer& image, int quality,
     JSAMPROW row_pointer = row.data();
     jpeg_write_scanlines(&cinfo, &row_pointer, 1);
   }
+#endif
 
   jpeg_finish_compress(&cinfo);
   out->assign(mem, mem + mem_size);

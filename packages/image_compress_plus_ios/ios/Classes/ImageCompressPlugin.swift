@@ -8,7 +8,8 @@ public class ImageCompressPlugin: NSObject, FlutterPlugin {
   private static let workQueue: OperationQueue = {
     let queue = OperationQueue()
     queue.qualityOfService = .userInitiated
-    queue.maxConcurrentOperationCount = 20
+    let cpuCount = ProcessInfo.processInfo.activeProcessorCount
+    queue.maxConcurrentOperationCount = max(4, min(cpuCount, 6))
     return queue
   }()
 
@@ -18,7 +19,7 @@ public class ImageCompressPlugin: NSObject, FlutterPlugin {
     registrar.addMethodCallDelegate(instance, channel: channel)
 
     // Register WebP coder once.
-    SDImageCodersManager.sharedManager().addCoder(SDImageWebPCoder.sharedCoder())
+    SDImageCodersManager.shared.addCoder(SDImageWebPCoder.shared)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

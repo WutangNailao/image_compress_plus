@@ -1,7 +1,6 @@
 import Foundation
 import UIKit
 import ImageIO
-import MobileCoreServices
 import SDWebImage
 import SDWebImageWebPCoder
 
@@ -12,11 +11,12 @@ final class CompressHandler {
     minHeight: Int,
     quality: Int,
     rotate: Int,
-    format: Int
+    format: Int,
+    inSampleSize: Int
   ) -> Data? {
     let image: UIImage?
     if isWebP(data) {
-      image = SDImageWebPCoder.sharedCoder().decodedImage(with: data, options: nil)
+      image = SDImageWebPCoder.shared.decodedImage(with: data, options: nil)
       guard let uiImage = image else {
         return nil
       }
@@ -30,7 +30,12 @@ final class CompressHandler {
       )
     }
 
-    guard var uiImage = decodeImage(data, minWidth: minWidth, minHeight: minHeight) else {
+    guard var uiImage = decodeImage(
+      data,
+      minWidth: minWidth,
+      minHeight: minHeight,
+      inSampleSize: inSampleSize
+    ) else {
       return nil
     }
 
@@ -65,7 +70,7 @@ final class CompressHandler {
       NSLog("format = %d", format)
     }
 
-    var scaled = image.scaleWithMinWidth(minWidth, minHeight: minHeight)
+    var scaled = image.scaleWithMinWidth(CGFloat(minWidth), minHeight: CGFloat(minHeight))
     if rotate % 360 != 0 {
       scaled = scaled.rotate(deg: CGFloat(rotate))
     }
@@ -81,7 +86,7 @@ final class CompressHandler {
     rotate: Int,
     format: Int
   ) -> Data? {
-    var scaled = image.scaleWithMinWidth(minWidth, minHeight: minHeight)
+    var scaled = image.scaleWithMinWidth(CGFloat(minWidth), minHeight: CGFloat(minHeight))
     if rotate % 360 != 0 {
       scaled = scaled.rotate(deg: CGFloat(rotate))
     }
@@ -94,7 +99,8 @@ final class CompressHandler {
         return nil
       }
       let data = NSMutableData()
-      guard let destination = CGImageDestinationCreateWithData(data as CFMutableData, kUTTypeHEIC, 1, nil) else {
+      let heicType = "public.heic" as CFString
+      guard let destination = CGImageDestinationCreateWithData(data as CFMutableData, heicType, 1, nil) else {
         return nil
       }
       let options = [kCGImageDestinationLossyCompressionQuality: Float(quality) / 100.0] as CFDictionary
@@ -106,8 +112,8 @@ final class CompressHandler {
     }
 
     if format == 3 { // webp
-      let options: SDImageCoderOptions = [SDImageCoderEncodeCompressionQuality: Float(quality) / 100.0]
-      return SDImageWebPCoder.sharedCoder().encodedData(with: image, format: .webP, options: options)
+      let options = [SDImageCoderOption.encodeCompressionQuality: Float(quality) / 100.0] as [SDImageCoderOption: Any]
+      return SDImageWebPCoder.shared.encodedData(with: image, format: .webP, options: options)
     }
 
     if format == 1 { // png
@@ -126,7 +132,12 @@ final class CompressHandler {
     return String(data: riff, encoding: .ascii) == "WEBP"
   }
 
-  private static func decodeImage(_ data: Data, minWidth: Int, minHeight: Int) -> UIImage? {
+  private static func decodeImage(
+    _ data: Data,
+    minWidth: Int,
+    minHeight: Int,
+    inSampleSize: Int
+  ) -> UIImage? {
     guard minWidth > 0, minHeight > 0 else {
       return UIImage(data: data)
     }
@@ -148,8 +159,9 @@ final class CompressHandler {
       scaleRatio = CGFloat(minHeight) / pixelHeight
     }
     scaleRatio = min(1, scaleRatio)
-    let targetWidth = floor(scaleRatio * pixelWidth)
-    let targetHeight = floor(scaleRatio * pixelHeight)
+    let sample = max(1, inSampleSize)
+    let targetWidth = floor((scaleRatio * pixelWidth) / CGFloat(sample))
+    let targetHeight = floor((scaleRatio * pixelHeight) / CGFloat(sample))
     let maxPixel = max(targetWidth, targetHeight)
 
     let options: [CFString: Any] = [

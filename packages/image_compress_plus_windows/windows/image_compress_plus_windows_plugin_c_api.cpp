@@ -7,5 +7,6 @@
 void ImageCompressPlusWindowsPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   image_compress_plus_windows::ImageCompressPlusWindowsPlugin::RegisterWithRegistrar(
-      flutter::PluginRegistrarWindows::FromRef(registrar));
+      flutter::PluginRegistrarManager::GetInstance()
+          ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }

@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data' as typed_data;
@@ -14,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:image_compress_plus/image_compress_plus.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
+import '../benchmark/benchmark_runner.dart';
 import '../const/resource.dart';
 import '../time_logger.dart';
 
@@ -32,6 +34,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ImageProvider? provider;
+  bool _isBenchmarkRunning = false;
+  String? _benchmarkSummary;
 
   Future<void> compress() async {
     final img = AssetImage('img/img.jpg');
@@ -250,9 +254,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   /// The example for compressing heic format.
-  /// 
+  ///
   /// Convert jpeg to heic format, and then convert heic to jpg format.
-  /// 
+  ///
   /// Show the file path and size in the console.
   void _compressHeicExample() async {
     if (!(Platform.isAndroid || Platform.isIOS)) {
@@ -262,11 +266,17 @@ class _MyAppState extends State<MyApp> {
     print('start compress');
     final logger = TimeLogger();
     logger.startRecorder();
-    // final tmpDir = (await getTemporaryDirectory()).path;
-    final tmpDir = (await path_provider.getExternalStorageDirectories())
-        ?.first
-        .absolute
-        .path;
+    final String? tmpDir;
+    if (Platform.isAndroid) {
+      tmpDir = (await path_provider.getExternalStorageDirectories())
+          ?.first
+          .absolute
+          .path;
+    } else if (Platform.isIOS) {
+      tmpDir = (await path_provider.getTemporaryDirectory()).path;
+    } else {
+      tmpDir = null;
+    }
 
     if (tmpDir == null) {
       print('tmpDir is null');
@@ -362,104 +372,175 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> _runPerformanceBenchmark() async {
+    if (_isBenchmarkRunning) {
+      return;
+    }
+
+    safeSetState(() {
+      _isBenchmarkRunning = true;
+      _benchmarkSummary = 'Benchmark running...';
+    });
+
+    try {
+      final imageData = await rootBundle.load(R.IMG_IMG_JPG);
+      final sourceBytes = imageData.buffer.asUint8List();
+      final tmpDir = await path_provider.getTemporaryDirectory();
+      final sourcePath = '${tmpDir.path}/benchmark-source.jpg';
+      final sourceFile = createFile(sourcePath);
+      sourceFile.writeAsBytesSync(sourceBytes, flush: true);
+
+      final result = await BenchmarkRunner.run(
+        sourceBytes: sourceBytes,
+        sourcePath: sourcePath,
+        temporaryDirectoryPath: tmpDir.path,
+      );
+
+      final reportPath = '${tmpDir.path}/image-compress-plus-benchmark-'
+          '${DateTime.now().millisecondsSinceEpoch}.json';
+      final reportJson = JsonEncoder.withIndent('  ').convert(result.toJson());
+      await File(reportPath).writeAsString(reportJson, flush: true);
+
+      final summary = '${result.toPrettyText()}\njson: $reportPath';
+      print(summary);
+      safeSetState(() {
+        _benchmarkSummary = summary;
+      });
+    } catch (e, s) {
+      final msg = 'Benchmark failed: $e';
+      print(msg);
+      print(s);
+      safeSetState(() {
+        _benchmarkSummary = msg;
+      });
+    } finally {
+      safeSetState(() {
+        _isBenchmarkRunning = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Plugin example app')),
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverToBoxAdapter(
-              child: AspectRatio(
-                aspectRatio: 1 / 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(border: Border.all(width: 2)),
-                  child: Image(
-                    image: provider ?? AssetImage('img/img.jpg'),
-                    fit: BoxFit.contain,
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverToBoxAdapter(
+                child: AspectRatio(
+                  aspectRatio: 1 / 1,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(border: Border.all(width: 2)),
+                    child: Image(
+                      image: provider ?? AssetImage('img/img.jpg'),
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Text('Platform: ${Platform.operatingSystem}'),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Text('Platform: ${Platform.operatingSystem}'),
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('CompressFile and rotate 180'),
-                onPressed: _testCompressFile,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('CompressFile and rotate 180'),
+                  onPressed: _testCompressFile,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('CompressAndGetFile and rotate 90'),
-                onPressed: getFileImage,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('CompressAndGetFile and rotate 90'),
+                  onPressed: getFileImage,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('CompressAsset and rotate 135'),
-                onPressed: () => testCompressAsset('img/img.jpg'),
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('CompressAsset and rotate 135'),
+                  onPressed: () => testCompressAsset('img/img.jpg'),
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('CompressList and rotate 270'),
-                onPressed: compressListExample,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('CompressList and rotate 270'),
+                  onPressed: compressListExample,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('test compress auto angle'),
-                onPressed: _compressAssetAndAutoRotate,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('test compress auto angle'),
+                  onPressed: _compressAssetAndAutoRotate,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('Test png '),
-                onPressed: _compressPngImage,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('Test png '),
+                  onPressed: _compressPngImage,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('Format transparent PNG'),
-                onPressed: _compressTransPNG,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('Format transparent PNG'),
+                  onPressed: _compressTransPNG,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('Restore transparent PNG'),
-                onPressed: _restoreTransPNG,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('Restore transparent PNG'),
+                  onPressed: _restoreTransPNG,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('Keep exif image'),
-                onPressed: _compressImageAndKeepExif,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('Keep exif image'),
+                  onPressed: _compressImageAndKeepExif,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('Convert to heic format and print the file url'),
-                onPressed: _compressHeicExample,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('Convert to heic format and print the file url'),
+                  onPressed: _compressHeicExample,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('Convert to webp format'),
-                onPressed: _compressWebpExample,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('Convert to webp format'),
+                  onPressed: _compressWebpExample,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: TextButton(
-                child: Text('Convert from webp format'),
-                onPressed: _compressFromWebPImage,
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text('Convert from webp format'),
+                  onPressed: _compressFromWebPImage,
+                ),
               ),
-            ),
-          ],
+              SliverToBoxAdapter(
+                child: TextButton(
+                  child: Text(
+                    _isBenchmarkRunning
+                        ? 'Performance benchmark running...'
+                        : 'Run performance benchmark',
+                  ),
+                  onPressed: _runPerformanceBenchmark,
+                ),
+              ),
+              if (_benchmarkSummary != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    child: SelectableText(_benchmarkSummary!),
+                  ),
+                ),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.settings_backup_restore),

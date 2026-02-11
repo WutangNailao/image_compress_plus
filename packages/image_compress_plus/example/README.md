@@ -18,3 +18,11 @@ For help getting started with Flutter, view our online
 
 The example UI includes buttons for `compressWithList`, `compressWithFile`, and
 `compressAndGetFile`, plus WebP and EXIF tests.
+
+It also includes a `Run performance benchmark` button. The benchmark runs
+`compressWithList`, `compressWithFile`, and `compressAndGetFile` test cases,
+prints average/P95 latency, total elapsed time, and sequential-vs-parallel
+concurrency probe metrics in logs, plus batch-throughput metrics (`N=50` total,
+throughput, P95 completion time, failure rate) by format/quality/concurrency,
+and writes a JSON report into the
+temporary directory.

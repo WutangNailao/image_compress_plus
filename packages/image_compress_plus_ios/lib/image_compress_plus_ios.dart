@@ -128,6 +128,11 @@ class ImageCompressPlusIOS extends ImageCompressPlusPlatform {
   }
 
   @override
+  void ignoreCheckSupportPlatform(bool value) {
+    _validator.ignoreCheckSupportPlatform = value;
+  }
+
+  @override
   Future<XFile?> compressAndGetFile(
     String path,
     String targetPath, {
