@@ -1,3 +1,10 @@
+## 2.1.0
+
+- **BREAKING**: change `ImageCompressPlusPlatform` method signatures by renaming named parameters from `minWidth`/`minHeight`/`format` to `targetWidth`/`targetHeight`/`targetFormat`.
+- **BREAKING**: remove `inSampleSize` from the platform interface compression methods and remove `ignoreCheckSupportPlatform` from `ImageCompressPlusPlatform`.
+- **BREAKING**: simplify `ImageCompressPlusValidator` by removing `MethodChannel`-based platform format checks and letting native implementations decide format support.
+- **FEAT**: add reusable validator checks for common compression parameters, retry count, and source/target path validation.
+
 ## 2.0.0
 
 - **BREAKING**: major version bump to align with image_compress_plus 3.0.0.
