@@ -13,8 +13,7 @@ export 'package:cross_file/cross_file.dart';
 abstract class ImageCompressPlusPlatform extends PlatformInterface {
   static const _token = Object();
 
-  static ImageCompressPlusPlatform instance =
-      UnsupportedImageCompressPlus();
+  static ImageCompressPlusPlatform instance = UnsupportedImageCompressPlus();
 
   ImageCompressPlusPlatform() : super(token: _token);
 
@@ -24,25 +23,23 @@ abstract class ImageCompressPlusPlatform extends PlatformInterface {
 
   Future<typed_data.Uint8List> compressWithList(
     typed_data.Uint8List image, {
-    int minWidth = 1920,
-    int minHeight = 1080,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
-    int inSampleSize = 1,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
   });
 
   Future<typed_data.Uint8List?> compressWithFile(
     String path, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   });
@@ -50,94 +47,77 @@ abstract class ImageCompressPlusPlatform extends PlatformInterface {
   Future<XFile?> compressAndGetFile(
     String path,
     String targetPath, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   });
 
   Future<typed_data.Uint8List?> compressAssetImage(
     String assetName, {
-    int minWidth = 1920,
-    int minHeight = 1080,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
   });
-
-  void ignoreCheckSupportPlatform(bool bool);
 }
 
 class UnsupportedImageCompressPlus extends ImageCompressPlusPlatform {
   @override
   Future<typed_data.Uint8List?> compressAssetImage(String assetName,
-      {int minWidth = 1920,
-      int minHeight = 1080,
-      int quality = 95,
-      int rotate = 0,
-      bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
-      bool keepExif = false}) {
-    throw UnimplementedError();
-  }
+          {int targetWidth = 1920,
+          int targetHeight = 1080,
+          int quality = 95,
+          int rotate = 0,
+          bool autoCorrectionAngle = true,
+          CompressFormat targetFormat = CompressFormat.jpeg,
+          bool keepExif = false}) =>
+      throw UnimplementedError();
 
   @override
   Future<typed_data.Uint8List?> compressWithFile(String path,
-      {int minWidth = 1920,
-      int minHeight = 1080,
-      int inSampleSize = 1,
-      int quality = 95,
-      int rotate = 0,
-      bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
-      bool keepExif = false,
-      int numberOfRetries = 5}) {
-    throw UnimplementedError();
-  }
+          {int targetWidth = 1920,
+          int targetHeight = 1080,
+          int quality = 95,
+          int rotate = 0,
+          bool autoCorrectionAngle = true,
+          CompressFormat targetFormat = CompressFormat.jpeg,
+          bool keepExif = false,
+          int numberOfRetries = 5}) =>
+      throw UnimplementedError();
 
   @override
   Future<XFile?> compressAndGetFile(String path, String targetPath,
-      {int minWidth = 1920,
-      int minHeight = 1080,
-      int inSampleSize = 1,
-      int quality = 95,
-      int rotate = 0,
-      bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
-      bool keepExif = false,
-      int numberOfRetries = 5}) {
-    throw UnimplementedError();
-  }
+          {int targetWidth = 1920,
+          int targetHeight = 1080,
+          int quality = 95,
+          int rotate = 0,
+          bool autoCorrectionAngle = true,
+          CompressFormat targetFormat = CompressFormat.jpeg,
+          bool keepExif = false,
+          int numberOfRetries = 5}) =>
+      throw UnimplementedError();
 
   @override
   Future<typed_data.Uint8List> compressWithList(typed_data.Uint8List image,
-      {int minWidth = 1920,
-      int minHeight = 1080,
-      int quality = 95,
-      int rotate = 0,
-      int inSampleSize = 1,
-      bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
-      bool keepExif = false}) {
-    throw UnimplementedError();
-  }
+          {int targetWidth = 1920,
+          int targetHeight = 1080,
+          int quality = 95,
+          int rotate = 0,
+          bool autoCorrectionAngle = true,
+          CompressFormat targetFormat = CompressFormat.jpeg,
+          bool keepExif = false}) =>
+      throw UnimplementedError();
 
   @override
-  Future<void> showNativeLog(bool value) {
-    throw UnimplementedError();
-  }
-
-  @override
-  void ignoreCheckSupportPlatform(bool bool) {
-    throw UnimplementedError();
-  }
+  Future<void> showNativeLog(bool value) => throw UnimplementedError();
 
   @override
   ImageCompressPlusValidator get validator => throw UnimplementedError();

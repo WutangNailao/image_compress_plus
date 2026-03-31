@@ -1,89 +1,62 @@
-import 'dart:io';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-
 import 'compress_format.dart';
 
 class ImageCompressPlusValidator {
-  ImageCompressPlusValidator(this.channel);
-
-  final MethodChannel channel;
+  ImageCompressPlusValidator();
 
   bool ignoreCheckExtName = false;
-  bool ignoreCheckSupportPlatform = false;
 
   void checkFileNameAndFormat(String name, CompressFormat format) {
-    if (ignoreCheckExtName) {
-      return;
+    if (ignoreCheckExtName) return;
+
+    final lowerName = name.toLowerCase();
+    final validExts = switch (format) {
+      CompressFormat.jpeg => ['.jpg', '.jpeg'],
+      CompressFormat.png => ['.png'],
+      CompressFormat.heic => ['.heic'],
+      CompressFormat.webp => ['.webp'],
+    };
+
+    assert(
+      validExts.any(lowerName.endsWith),
+      'The ${format.name} format name must end with ${validExts.join(' or ')}.',
+    );
+  }
+
+  void checkCommonParameters({
+    required int targetWidth,
+    required int targetHeight,
+    int quality = 95,
+  }) {
+    if (targetWidth <= 0) {
+      throw ArgumentError.value(
+          targetWidth, 'targetWidth', 'must be greater than 0');
     }
-    name = name.toLowerCase();
-    if (format == CompressFormat.jpeg) {
-      assert(
-        (name.endsWith('.jpg') || name.endsWith('.jpeg')),
-        'The jpeg format name must end with jpg or jpeg.',
+    if (targetHeight <= 0) {
+      throw ArgumentError.value(
+        targetHeight,
+        'targetHeight',
+        'must be greater than 0',
       );
-    } else if (format == CompressFormat.png) {
-      assert(
-        name.endsWith('.png'),
-        'The png format name must end with png.',
-      );
-    } else if (format == CompressFormat.heic) {
-      assert(
-        name.endsWith('.heic'),
-        'The heic format name must end with heic.',
-      );
-    } else if (format == CompressFormat.webp) {
-      assert(
-        name.endsWith('.webp'),
-        'The webp format name must end with webp.',
+    }
+    if (quality < 0 || quality > 100) {
+      throw ArgumentError.value(
+          quality, 'quality', 'must be between 0 and 100');
+    }
+  }
+
+  void checkNumberOfRetries(int numberOfRetries) {
+    if (numberOfRetries <= 0) {
+      throw ArgumentError.value(
+        numberOfRetries,
+        'numberOfRetries',
+        'must be greater than 0',
       );
     }
   }
 
-  Future<bool> checkSupportPlatform(CompressFormat format) async {
-    if (ignoreCheckSupportPlatform) {
-      return true;
-    }
-    if (format == CompressFormat.heic) {
-      if (Platform.isIOS) {
-        final String version = await channel.invokeMethod('getSystemVersion');
-        final firstVersion = version.split('.')[0];
-        final result = int.parse(firstVersion) >= 13;
-        const msg = 'The heic format only support iOS 13.0+';
-        assert(result, msg);
-        _checkThrowError(result, msg);
-        return result;
-      } else if (Platform.isAndroid) {
-        final int version = await channel.invokeMethod('getSystemVersion');
-        final result = version >= 28;
-        const msg = 'The heic format only support android API 28+';
-        assert(result, msg);
-        _checkThrowError(result, msg);
-        return result;
-      } else {
-        const msg = 'The heic format only support Android and iOS.';
-        assert(Platform.isAndroid || Platform.isIOS, msg);
-        _checkThrowError(false, msg);
-        return false;
-      }
-    } else if (format == CompressFormat.webp) {
-      if (Platform.isAndroid ||
-          Platform.isIOS ||
-          Platform.isLinux ||
-          Platform.isWindows) {
-        return true;
-      }
-      const msg = 'The webp format only support Android, iOS, Linux, and Windows.';
-      _checkThrowError(false, msg);
-      return false;
-    }
-    return true;
-  }
-
-  void _checkThrowError(bool result, String msg) {
-    if (!result) {
-      throw UnsupportedError(msg);
+  void checkSourceAndTargetPath(String sourcePath, String targetPath) {
+    if (sourcePath == targetPath) {
+      throw ArgumentError('Target path and source path cannot be the same.');
     }
   }
 }
