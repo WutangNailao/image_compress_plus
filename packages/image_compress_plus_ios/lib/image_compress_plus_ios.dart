@@ -2,37 +2,38 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data' as typed_data;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_compress_plus_platform_interface/image_compress_plus_platform_interface.dart';
 
+import 'messages.g.dart';
+
 class ImageCompressPlusIOS extends ImageCompressPlusPlatform {
-  static const _channel = MethodChannel('image_compress_plus');
+  final ImageCompressPlusHostApi _hostApi = ImageCompressPlusHostApi();
 
   @override
   ImageCompressPlusValidator get validator => _validator;
-  final ImageCompressPlusValidator _validator =
-      ImageCompressPlusValidator(_channel);
+  final ImageCompressPlusValidator _validator = ImageCompressPlusValidator();
 
   static void registerWith() {
     ImageCompressPlusPlatform.instance = ImageCompressPlusIOS();
   }
 
   @override
-  Future<typed_data.Uint8List?> compressAssetImage(String assetName,
-      {int minWidth = 1920,
-      int minHeight = 1080,
+  Future<Uint8List?> compressAssetImage(String assetName,
+      {int targetWidth = 1920,
+      int targetHeight = 1080,
       int quality = 95,
       int rotate = 0,
       bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
+      CompressFormat targetFormat = CompressFormat.jpeg,
       bool keepExif = false}) async {
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      return null;
-    }
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
     final img = AssetImage(assetName);
     const config = ImageConfiguration();
     final AssetBundleImageKey key = await img.obtainKey(config);
@@ -43,138 +44,119 @@ class ImageCompressPlusIOS extends ImageCompressPlusPlatform {
     }
     return compressWithList(
       uint8List,
-      minHeight: minHeight,
-      minWidth: minWidth,
+      targetHeight: targetHeight,
+      targetWidth: targetWidth,
       quality: quality,
       rotate: rotate,
       autoCorrectionAngle: autoCorrectionAngle,
-      format: format,
+      targetFormat: targetFormat,
       keepExif: keepExif,
     );
   }
 
   @override
-  Future<typed_data.Uint8List?> compressWithFile(
+  Future<Uint8List?> compressWithFile(
     String path, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   }) async {
-    if (numberOfRetries <= 0) {
-      throw CompressError("numberOfRetries can't be null or less than 0");
-    }
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
+    _validator.checkNumberOfRetries(numberOfRetries);
     if (!File(path).existsSync()) {
       throw CompressError('Image file does not exist in $path.');
     }
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      return null;
-    }
-    final result = await _channel.invokeMethod('compressWithFile', [
-      path,
-      minWidth,
-      minHeight,
-      quality,
-      rotate,
-      autoCorrectionAngle,
-      _convertTypeToInt(format),
-      keepExif,
-      inSampleSize,
-      numberOfRetries
-    ]);
-    return result;
+    return _hostApi.compressWithFile(
+      path: path,
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+      rotate: rotate,
+      autoCorrectionAngle: autoCorrectionAngle,
+      targetFormat: _convertTypeToHostFormat(targetFormat),
+      keepExif: keepExif,
+      numberOfRetries: numberOfRetries,
+    );
   }
 
   @override
-  Future<typed_data.Uint8List> compressWithList(typed_data.Uint8List image,
-      {int minWidth = 1920,
-      int minHeight = 1080,
+  Future<Uint8List> compressWithList(Uint8List image,
+      {int targetWidth = 1920,
+      int targetHeight = 1080,
       int quality = 95,
       int rotate = 0,
-      int inSampleSize = 1,
       bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
+      CompressFormat targetFormat = CompressFormat.jpeg,
       bool keepExif = false}) async {
     if (image.isEmpty) {
       throw CompressError('The image is empty.');
     }
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      throw UnsupportedError('The image type $format is not supported.');
-    }
-    final result = await _channel.invokeMethod('compressWithList', [
-      image,
-      minWidth,
-      minHeight,
-      quality,
-      rotate,
-      autoCorrectionAngle,
-      _convertTypeToInt(format),
-      keepExif,
-      inSampleSize,
-    ]);
-    return result;
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
+    return _hostApi.compressWithList(
+      image: image,
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+      rotate: rotate,
+      autoCorrectionAngle: autoCorrectionAngle,
+      targetFormat: _convertTypeToHostFormat(targetFormat),
+      keepExif: keepExif,
+    );
   }
 
   @override
   Future<void> showNativeLog(bool value) async {
-    await _channel.invokeMethod('showLog', value);
-  }
-
-  @override
-  void ignoreCheckSupportPlatform(bool value) {
-    _validator.ignoreCheckSupportPlatform = value;
+    await _hostApi.showLog(value);
   }
 
   @override
   Future<XFile?> compressAndGetFile(
     String path,
     String targetPath, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   }) async {
-    if (numberOfRetries <= 0) {
-      throw CompressError("numberOfRetries can't be null or less than 0");
-    }
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
+    _validator.checkNumberOfRetries(numberOfRetries);
     if (!File(path).existsSync()) {
       throw CompressError('Image file does not exist in $path.');
     }
-    if (path == targetPath) {
-      throw CompressError('Target path and source path cannot be the same.');
-    }
-    _validator.checkFileNameAndFormat(targetPath, format);
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      return null;
-    }
-    final String? result = await _channel.invokeMethod(
-      'compressWithFileAndGetFile',
-      [
-        path,
-        minWidth,
-        minHeight,
-        quality,
-        targetPath,
-        rotate,
-        autoCorrectionAngle,
-        _convertTypeToInt(format),
-        keepExif,
-        inSampleSize,
-        numberOfRetries,
-      ],
+    _validator.checkSourceAndTargetPath(path, targetPath);
+    _validator.checkFileNameAndFormat(targetPath, targetFormat);
+    final String? result = await _hostApi.compressWithFileAndGetFile(
+      path: path,
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+      targetPath: targetPath,
+      rotate: rotate,
+      autoCorrectionAngle: autoCorrectionAngle,
+      targetFormat: _convertTypeToHostFormat(targetFormat),
+      keepExif: keepExif,
+      numberOfRetries: numberOfRetries,
     );
     if (result == null) {
       return null;
@@ -182,16 +164,12 @@ class ImageCompressPlusIOS extends ImageCompressPlusPlatform {
     return XFile(result);
   }
 
-  int _convertTypeToInt(CompressFormat format) {
-    switch (format) {
-      case CompressFormat.jpeg:
-        return 0;
-      case CompressFormat.png:
-        return 1;
-      case CompressFormat.heic:
-        return 2;
-      case CompressFormat.webp:
-        return 3;
-    }
+  HostFormat _convertTypeToHostFormat(CompressFormat format) {
+    return switch (format) {
+      CompressFormat.jpeg => HostFormat.jpeg,
+      CompressFormat.png => HostFormat.png,
+      CompressFormat.heic => HostFormat.heic,
+      CompressFormat.webp => HostFormat.webp,
+    };
   }
 }

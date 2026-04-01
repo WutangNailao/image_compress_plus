@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'image_compress_plus_ios'
-  s.version          = '1.0.6'
+  s.version          = '3.0.0'
   s.summary          = 'Compress image with native Objective-C with faster speed.'
   s.description      = <<-DESC
 Compress image with native Objective-C with faster speed.
