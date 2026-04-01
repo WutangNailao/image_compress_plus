@@ -1,6 +1,17 @@
-## Unreleased
+## 3.0.0
 
 - **BREAKING**: raised minimum iOS deployment target to `13.0`.
+- **BREAKING**: bumped package version to `3.0.0` and raised Dart/Flutter toolchain requirements.
+- **BREAKING**: migrated the iOS implementation from `MethodChannel` handlers to a Pigeon host API.
+- **DEPS**: bumped `image_compress_plus_platform_interface` to `2.1.0` and adopted the new API surface.
+- **REFACTOR**: rebuilt the iOS compression flow around request/support/compressor modules.
+- **PERF**: unified internal image processing to pixel semantics with `scale = 1`.
+- **PERF**: merged normalize/resize/rotate into a single geometry render pass.
+- **PERF**: improved WebP decoding with target-size thumbnail decode.
+- **FIX**: corrected pixel size fallback for scaled `UIImage` inputs.
+- **FEAT**: supported single-edge target resizing semantics.
+- **FEAT**: preserved metadata more completely while stripping conflicting fields.
+- **FEAT**: added retriable file operations and stable/transient filesystem errors.
 
 ## 2.0.0
 
