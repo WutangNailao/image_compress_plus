@@ -12,7 +12,7 @@ Compress image with native Objective-C with faster speed.
   s.ios.deployment_target = '13.0'
   s.swift_version = '5.0'
 
-  s.source_files = 'Classes/**/*.swift'
+  s.source_files = 'image_compress_plus_ios/Sources/image_compress_plus_ios/**/*.swift'
 
   s.dependency 'Flutter'
   s.dependency 'SDWebImage'
