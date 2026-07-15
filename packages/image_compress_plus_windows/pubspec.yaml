@@ -4,8 +4,10 @@ repository: https://github.com/WuTangNaiLao/image_compress_plus
 version: 3.0.0
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.9.0 <4.0.0'
   flutter: '>=3.10.0'
+
+resolution: workspace
 
 dependencies:
   flutter:
