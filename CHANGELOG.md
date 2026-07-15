@@ -8,6 +8,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Changes
 
 - **BREAKING**: raised minimum iOS deployment target to `13.0`.
+- **BREAKING**: migrated `image_compress_plus_ios` from `MethodChannel` handlers to a Pigeon host API and raised its package/toolchain requirements.
+- **DEPS**: bumped `image_compress_plus_platform_interface` to `3.0.0`.
+- **PERF**: refactored the iOS compression pipeline to use pixel-based processing, a single geometry render pass, and target-size WebP decoding.
+- **FIX**: corrected iOS pixel size fallback for scaled `UIImage` inputs and aligned single-edge target resize behavior.
+- **FEAT**: improved iOS metadata preservation and retriable file operation handling.
 
 ## 2026-02-11
 
