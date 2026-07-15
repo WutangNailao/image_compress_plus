@@ -1,3 +1,12 @@
+## 3.0.0
+
+- **BREAKING**: Replace the legacy MethodChannel handler chain with a `pigeon`-based host API.
+- **BREAKING**: Rebuild Android processing around a unified compression pipeline with four fixed output encoders: `jpeg`, `png`, `webp`, and `heic`.
+- **BREAKING**: Remove the old `CompressFileHandler` / `CompressListHandler` / `FormatRegister` / `CommonHandler` / `HeifHandler` architecture.
+- **BREAKING**: Raise the Android toolchain requirements to min SDK 24, compile SDK 36, Kotlin 2.2.20, and Java 17.
+- **FEAT**: Prefer `ImageDecoder` on Android 9+ and fall back to `BitmapFactory` on older devices.
+- **FEAT**: Add documented input format capability and fallback strategy for Android.
+
 ## 2.0.0
 
 - **BREAKING**: major version bump to align with image_compress_plus 3.0.0.

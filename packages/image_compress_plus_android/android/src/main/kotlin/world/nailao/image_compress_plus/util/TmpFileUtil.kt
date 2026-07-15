@@ -5,8 +5,9 @@ import java.io.File
 import java.util.*
 
 object TmpFileUtil {
-    fun createTmpFile(context: Context): File {
+    fun createTmpFile(context: Context, extension: String = ""): File {
         val string = UUID.randomUUID().toString()
-        return File(context.cacheDir, string)
+        val suffix = if (extension.isEmpty()) "" else ".$extension"
+        return File(context.cacheDir, string + suffix)
     }
 }
