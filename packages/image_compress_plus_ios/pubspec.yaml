@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   image_compress_plus_platform_interface: ^3.0.0
+  meta: ^1.17.0
 
 dev_dependencies:
   pigeon: ^26.3.3
