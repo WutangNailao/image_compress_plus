@@ -1,6 +1,5 @@
 // ignore: unnecessary_import
-import 'dart:typed_data';
-
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:image_compress_plus_platform_interface/image_compress_plus_platform_interface.dart';
 
@@ -12,38 +11,40 @@ class ImageCompressPlusOhos extends ImageCompressPlusPlatform {
     ImageCompressPlusPlatform.instance = ImageCompressPlusOhos();
   }
 
-  Future<void> checkSupport(CompressFormat format) async {
-    if (!(await validator.checkSupportPlatform(format))) {
-      throw UnsupportedError('The image type $format is not supported.');
-    }
-  }
-
   @override
   Future<XFile?> compressAndGetFile(
     String path,
     String targetPath, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = true,
     int numberOfRetries = 5,
   }) async {
-    await checkSupport(format);
-
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
+    _validator.checkNumberOfRetries(numberOfRetries);
+    if (!File(path).existsSync()) {
+      throw CompressError('Image file does not exist in $path.');
+    }
+    _validator.checkSourceAndTargetPath(path, targetPath);
+    _validator.checkFileNameAndFormat(targetPath, targetFormat);
     final dstPath = await _channel.invokeMethod('compressAndGetFile', {
       'path': path,
       'targetPath': targetPath,
-      'minWidth': minWidth,
-      'minHeight': minHeight,
-      'inSampleSize': inSampleSize,
+      'minWidth': targetWidth,
+      'minHeight': targetHeight,
+      'inSampleSize': 1,
       'quality': quality,
       'rotate': rotate,
       'autoCorrectionAngle': autoCorrectionAngle,
-      'format': format.index,
+      'format': targetFormat.index,
       'keepExif': keepExif,
       'numberOfRetries': numberOfRetries,
     });
@@ -58,58 +59,65 @@ class ImageCompressPlusOhos extends ImageCompressPlusPlatform {
   @override
   Future<Uint8List?> compressAssetImage(
     String assetName, {
-    int minWidth = 1920,
-    int minHeight = 1080,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = true,
-    int numberOfRetries = 5,
   }) async {
-    await checkSupport(format);
-
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
     final bytes = await rootBundle
         .load(assetName)
         .then((value) => value.buffer.asUint8List());
 
     return compressWithList(
       bytes,
-      minWidth: minWidth,
-      minHeight: minHeight,
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
       quality: quality,
       rotate: rotate,
       autoCorrectionAngle: autoCorrectionAngle,
-      format: format,
+      targetFormat: targetFormat,
       keepExif: keepExif,
-      numberOfRetries: numberOfRetries,
     );
   }
 
   @override
   Future<Uint8List?> compressWithFile(
     String path, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = true,
     int numberOfRetries = 5,
   }) async {
-    await checkSupport(format);
-
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
+    _validator.checkNumberOfRetries(numberOfRetries);
+    if (!File(path).existsSync()) {
+      throw CompressError('Image file does not exist in $path.');
+    }
     final result = await _channel.invokeMethod('compressWithFile', {
       'path': path,
-      'minWidth': minWidth,
-      'minHeight': minHeight,
-      'inSampleSize': inSampleSize,
+      'minWidth': targetWidth,
+      'minHeight': targetHeight,
+      'inSampleSize': 1,
       'quality': quality,
       'rotate': rotate,
       'autoCorrectionAngle': autoCorrectionAngle,
-      'format': format.index,
+      'format': targetFormat.index,
       'keepExif': keepExif,
       'numberOfRetries': numberOfRetries,
     });
@@ -124,29 +132,33 @@ class ImageCompressPlusOhos extends ImageCompressPlusPlatform {
   @override
   Future<Uint8List> compressWithList(
     Uint8List image, {
-    int minWidth = 1920,
-    int minHeight = 1080,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
-    int inSampleSize = 1,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = true,
-    int numberOfRetries = 5,
   }) async {
-    await checkSupport(format);
-
+    if (image.isEmpty) {
+      throw CompressError('The image is empty.');
+    }
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
     final result = await _channel.invokeMethod<Uint8List>('compressWithList', {
       'list': image,
-      'minWidth': minWidth,
-      'minHeight': minHeight,
-      'inSampleSize': inSampleSize,
+      'minWidth': targetWidth,
+      'minHeight': targetHeight,
+      'inSampleSize': 1,
       'quality': quality,
       'rotate': rotate,
       'autoCorrectionAngle': autoCorrectionAngle,
-      'format': format.index,
+      'format': targetFormat.index,
       'keepExif': keepExif,
-      'numberOfRetries': numberOfRetries,
+      'numberOfRetries': 5,
     });
 
     if (result == null) {
@@ -163,29 +175,5 @@ class ImageCompressPlusOhos extends ImageCompressPlusPlatform {
 
   @override
   ImageCompressPlusValidator get validator => _validator;
-  final ImageCompressPlusValidator _validator =
-      OhosImageCompressPlusValidator(_channel);
-
-  @override
-  // ignore: avoid_renaming_method_parameters
-  void ignoreCheckSupportPlatform(bool value) {
-    _validator.ignoreCheckSupportPlatform = value;
-  }
-}
-
-class OhosImageCompressPlusValidator extends ImageCompressPlusValidator {
-  OhosImageCompressPlusValidator(MethodChannel channel) : super(channel);
-
-  @override
-  Future<bool> checkSupportPlatform(CompressFormat format) async {
-    if (ignoreCheckSupportPlatform) {
-      return true;
-    }
-
-    if (format == CompressFormat.heic) {
-      return false;
-    }
-
-    return true;
-  }
+  final ImageCompressPlusValidator _validator = ImageCompressPlusValidator();
 }

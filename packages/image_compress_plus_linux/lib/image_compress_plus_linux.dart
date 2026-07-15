@@ -13,26 +13,28 @@ class ImageCompressPlusLinux extends ImageCompressPlusPlatform {
 
   @override
   ImageCompressPlusValidator get validator => _validator;
-  final ImageCompressPlusValidator _validator =
-      ImageCompressPlusValidator(_channel);
+  final ImageCompressPlusValidator _validator = ImageCompressPlusValidator();
 
   static void registerWith() {
     ImageCompressPlusPlatform.instance = ImageCompressPlusLinux();
   }
 
   @override
-  Future<typed_data.Uint8List?> compressAssetImage(String assetName,
-      {int minWidth = 1920,
-      int minHeight = 1080,
-      int quality = 95,
-      int rotate = 0,
-      bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
-      bool keepExif = false}) async {
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      return null;
-    }
+  Future<typed_data.Uint8List?> compressAssetImage(
+    String assetName, {
+    int targetWidth = 1920,
+    int targetHeight = 1080,
+    int quality = 95,
+    int rotate = 0,
+    bool autoCorrectionAngle = true,
+    CompressFormat targetFormat = CompressFormat.jpeg,
+    bool keepExif = false,
+  }) async {
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
     final img = AssetImage(assetName);
     const config = ImageConfiguration();
     final AssetBundleImageKey key = await img.obtainKey(config);
@@ -43,12 +45,12 @@ class ImageCompressPlusLinux extends ImageCompressPlusPlatform {
     }
     return compressWithList(
       uint8List,
-      minHeight: minHeight,
-      minWidth: minWidth,
+      targetHeight: targetHeight,
+      targetWidth: targetWidth,
       quality: quality,
       rotate: rotate,
       autoCorrectionAngle: autoCorrectionAngle,
-      format: format,
+      targetFormat: targetFormat,
       keepExif: keepExif,
     );
   }
@@ -56,68 +58,68 @@ class ImageCompressPlusLinux extends ImageCompressPlusPlatform {
   @override
   Future<typed_data.Uint8List?> compressWithFile(
     String path, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   }) async {
-    if (numberOfRetries <= 0) {
-      throw CompressError("numberOfRetries can't be null or less than 0");
-    }
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
+    _validator.checkNumberOfRetries(numberOfRetries);
     if (!File(path).existsSync()) {
       throw CompressError('Image file does not exist in $path.');
     }
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      return null;
-    }
     final result = await _channel.invokeMethod('compressWithFile', [
       path,
-      minWidth,
-      minHeight,
+      targetWidth,
+      targetHeight,
       quality,
       rotate,
       autoCorrectionAngle,
-      _convertTypeToInt(format),
+      _convertTypeToInt(targetFormat),
       keepExif,
-      inSampleSize,
-      numberOfRetries
+      1,
+      numberOfRetries,
     ]);
     return result;
   }
 
   @override
-  Future<typed_data.Uint8List> compressWithList(typed_data.Uint8List image,
-      {int minWidth = 1920,
-      int minHeight = 1080,
-      int quality = 95,
-      int rotate = 0,
-      int inSampleSize = 1,
-      bool autoCorrectionAngle = true,
-      CompressFormat format = CompressFormat.jpeg,
-      bool keepExif = false}) async {
+  Future<typed_data.Uint8List> compressWithList(
+    typed_data.Uint8List image, {
+    int targetWidth = 1920,
+    int targetHeight = 1080,
+    int quality = 95,
+    int rotate = 0,
+    bool autoCorrectionAngle = true,
+    CompressFormat targetFormat = CompressFormat.jpeg,
+    bool keepExif = false,
+  }) async {
     if (image.isEmpty) {
       throw CompressError('The image is empty.');
     }
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      throw UnsupportedError('The image type $format is not supported.');
-    }
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
     final result = await _channel.invokeMethod('compressWithList', [
       image,
-      minWidth,
-      minHeight,
+      targetWidth,
+      targetHeight,
       quality,
       rotate,
       autoCorrectionAngle,
-      _convertTypeToInt(format),
+      _convertTypeToInt(targetFormat),
       keepExif,
-      inSampleSize,
+      1,
     ]);
     return result;
   }
@@ -128,54 +130,43 @@ class ImageCompressPlusLinux extends ImageCompressPlusPlatform {
   }
 
   @override
-  void ignoreCheckSupportPlatform(bool value) {
-    _validator.ignoreCheckSupportPlatform = value;
-  }
-
-  @override
   Future<XFile?> compressAndGetFile(
     String path,
     String targetPath, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   }) async {
-    if (numberOfRetries <= 0) {
-      throw CompressError("numberOfRetries can't be null or less than 0");
-    }
+    _validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
+    _validator.checkNumberOfRetries(numberOfRetries);
     if (!File(path).existsSync()) {
       throw CompressError('Image file does not exist in $path.');
     }
-    if (path == targetPath) {
-      throw CompressError('Target path and source path cannot be the same.');
-    }
-    _validator.checkFileNameAndFormat(targetPath, format);
-    final support = await _validator.checkSupportPlatform(format);
-    if (!support) {
-      return null;
-    }
-    final String? result = await _channel.invokeMethod(
-      'compressWithFileAndGetFile',
-      [
-        path,
-        minWidth,
-        minHeight,
-        quality,
-        targetPath,
-        rotate,
-        autoCorrectionAngle,
-        _convertTypeToInt(format),
-        keepExif,
-        inSampleSize,
-        numberOfRetries,
-      ],
-    );
+    _validator.checkSourceAndTargetPath(path, targetPath);
+    _validator.checkFileNameAndFormat(targetPath, targetFormat);
+    final String? result =
+        await _channel.invokeMethod('compressWithFileAndGetFile', [
+      path,
+      targetWidth,
+      targetHeight,
+      quality,
+      targetPath,
+      rotate,
+      autoCorrectionAngle,
+      _convertTypeToInt(targetFormat),
+      keepExif,
+      1,
+      numberOfRetries,
+    ]);
     if (result == null) {
       return null;
     }

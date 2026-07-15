@@ -17,13 +17,12 @@ class ImageCompressPlusWeb extends ImageCompressPlusPlatform {
   Future<XFile?> compressAndGetFile(
     String path,
     String targetPath, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   }) {
@@ -33,35 +32,39 @@ class ImageCompressPlusWeb extends ImageCompressPlusPlatform {
   @override
   Future<typed_data.Uint8List?> compressAssetImage(
     String assetName, {
-    int minWidth = 1920,
-    int minHeight = 1080,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
   }) async {
+    validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
     final asset = await rootBundle.load(assetName);
     final buffer = asset.buffer.asUint8List();
     return resizeWithList(
       buffer: buffer,
-      minWidth: minWidth,
-      minHeight: minHeight,
+      minWidth: targetWidth,
+      minHeight: targetHeight,
       quality: quality,
-      format: format,
+      format: targetFormat,
     );
   }
 
   @override
   Future<typed_data.Uint8List?> compressWithFile(
     String path, {
-    int minWidth = 1920,
-    int minHeight = 1080,
-    int inSampleSize = 1,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
     int numberOfRetries = 5,
   }) {
@@ -71,26 +74,27 @@ class ImageCompressPlusWeb extends ImageCompressPlusPlatform {
   @override
   Future<typed_data.Uint8List> compressWithList(
     typed_data.Uint8List image, {
-    int minWidth = 1920,
-    int minHeight = 1080,
+    int targetWidth = 1920,
+    int targetHeight = 1080,
     int quality = 95,
     int rotate = 0,
-    int inSampleSize = 1,
     bool autoCorrectionAngle = true,
-    CompressFormat format = CompressFormat.jpeg,
+    CompressFormat targetFormat = CompressFormat.jpeg,
     bool keepExif = false,
   }) {
+    validator.checkCommonParameters(
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      quality: quality,
+    );
     return resizeWithList(
       buffer: image,
-      minWidth: minWidth,
-      minHeight: minHeight,
+      minWidth: targetWidth,
+      minHeight: targetHeight,
       quality: quality,
-      format: format,
+      format: targetFormat,
     );
   }
-
-  @override
-  void ignoreCheckSupportPlatform(bool bool) {}
 
   @override
   Future<void> showNativeLog(bool value) async {
@@ -98,20 +102,5 @@ class ImageCompressPlusWeb extends ImageCompressPlusPlatform {
   }
 
   @override
-  ImageCompressPlusValidator get validator =>
-      _ImageCompressPlusValidator();
-}
-
-class _ImageCompressPlusValidator extends ImageCompressPlusValidator {
-  _ImageCompressPlusValidator()
-      : super(
-          const MethodChannel('image_compress_plus'),
-        );
-
-  @override
-  void checkFileNameAndFormat(String name, CompressFormat format) {}
-  @override
-  Future<bool> checkSupportPlatform(CompressFormat format) async {
-    return true;
-  }
+  ImageCompressPlusValidator get validator => ImageCompressPlusValidator();
 }

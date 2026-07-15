@@ -50,13 +50,12 @@ class ImageCompressPlus {
   }) async {
     return _platform.compressWithList(
       image,
-      minWidth: minWidth,
-      minHeight: minHeight,
+      targetWidth: minWidth,
+      targetHeight: minHeight,
       quality: quality,
       rotate: rotate,
-      inSampleSize: inSampleSize,
       autoCorrectionAngle: autoCorrectionAngle,
-      format: format,
+      targetFormat: format,
       keepExif: keepExif,
     );
   }
@@ -76,13 +75,12 @@ class ImageCompressPlus {
   }) async {
     return _platform.compressWithFile(
       path,
-      minWidth: minWidth,
-      minHeight: minHeight,
+      targetWidth: minWidth,
+      targetHeight: minHeight,
       quality: quality,
       rotate: rotate,
-      inSampleSize: inSampleSize,
       autoCorrectionAngle: autoCorrectionAngle,
-      format: format,
+      targetFormat: format,
       keepExif: keepExif,
       numberOfRetries: numberOfRetries,
     );
@@ -105,13 +103,12 @@ class ImageCompressPlus {
     return _platform.compressAndGetFile(
       path,
       targetPath,
-      minWidth: minWidth,
-      minHeight: minHeight,
+      targetWidth: minWidth,
+      targetHeight: minHeight,
       quality: quality,
       rotate: rotate,
-      inSampleSize: inSampleSize,
       autoCorrectionAngle: autoCorrectionAngle,
-      format: format,
+      targetFormat: format,
       keepExif: keepExif,
       numberOfRetries: numberOfRetries,
     );
@@ -130,17 +127,13 @@ class ImageCompressPlus {
   }) async {
     return _platform.compressAssetImage(
       assetName,
-      minWidth: minWidth,
-      minHeight: minHeight,
+      targetWidth: minWidth,
+      targetHeight: minHeight,
       quality: quality,
       rotate: rotate,
       autoCorrectionAngle: autoCorrectionAngle,
-      format: format,
+      targetFormat: format,
       keepExif: keepExif,
     );
-  }
-
-  static void ignoreCheckSupportPlatform(bool value) {
-    _platform.ignoreCheckSupportPlatform(value);
   }
 }
