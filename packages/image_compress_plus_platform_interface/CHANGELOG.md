@@ -1,4 +1,4 @@
-## 2.1.0
+## 3.0.0
 
 - **BREAKING**: change `ImageCompressPlusPlatform` method signatures by renaming named parameters from `minWidth`/`minHeight`/`format` to `targetWidth`/`targetHeight`/`targetFormat`.
 - **BREAKING**: remove `inSampleSize` from the platform interface compression methods and remove `ignoreCheckSupportPlatform` from `ImageCompressPlusPlatform`.
