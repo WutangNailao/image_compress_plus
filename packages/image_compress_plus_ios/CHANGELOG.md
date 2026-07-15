@@ -1,3 +1,7 @@
+## 3.1.0
+
+- **FEAT**: added Swift Package Manager support alongside CocoaPods.
+
 ## 3.0.0
 
 - **BREAKING**: raised minimum iOS deployment target to `13.0`.
