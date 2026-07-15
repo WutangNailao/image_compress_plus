@@ -1,3 +1,8 @@
+## 2.1.1
+
+- **FIX**: restore the 2.0.x platform interface contract used by `image_compress_plus` 3.0.0 and its endorsed platform packages.
+- **FIX**: restore `minWidth`, `minHeight`, `format`, `inSampleSize`, `ignoreCheckSupportPlatform`, and platform support validation APIs that were removed in 2.1.0.
+
 ## 2.1.0
 
 - **BREAKING**: change `ImageCompressPlusPlatform` method signatures by renaming named parameters from `minWidth`/`minHeight`/`format` to `targetWidth`/`targetHeight`/`targetFormat`.
