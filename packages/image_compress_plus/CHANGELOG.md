@@ -1,6 +1,9 @@
-## Unreleased
+## 4.0.0
 
 - **BREAKING**: raised minimum iOS deployment target to `13.0`.
+- **BREAKING**: adopted `image_compress_plus_platform_interface` 3.0 and removed `ignoreCheckSupportPlatform`.
+- **BREAKING**: `inSampleSize` is retained for source compatibility but is no longer forwarded to platform implementations.
+- **DEPS**: aligned all endorsed platform package versions with the new platform interface.
 
 ## 3.0.0
 

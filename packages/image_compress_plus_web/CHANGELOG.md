@@ -1,3 +1,8 @@
+## 0.3.0
+
+- **BREAKING**: adopt `image_compress_plus_platform_interface` 3.0.
+- **BREAKING**: remove the custom Dart-side platform validator.
+
 ## 0.2.0
 
 - **DEPS**: bumped minor version to align with image_compress_plus 3.0.0 release line.

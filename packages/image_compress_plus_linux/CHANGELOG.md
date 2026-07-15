@@ -1,3 +1,8 @@
+## 3.0.0
+
+- **BREAKING**: adopt `image_compress_plus_platform_interface` 3.0.
+- **BREAKING**: remove Dart-side format support checks and the public `inSampleSize` platform parameter.
+
 ## 2.0.0
 
 - **BREAKING**: major version bump to align with image_compress_plus 3.0.0.
