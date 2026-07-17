@@ -1,5 +1,6 @@
-## Unreleased
+## 2.1.0
 
+- **FEAT**: added Swift Package Manager support while retaining CocoaPods compatibility.
 - **BREAKING**: raised minimum iOS deployment target to `13.0`.
 
 ## 2.0.0
